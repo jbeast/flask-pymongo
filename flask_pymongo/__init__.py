@@ -1,4 +1,4 @@
-# Copyright (c) 2011, Dan Crosta
+# Copyright (c) 2011-2015, Dan Crosta
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -36,7 +36,6 @@ from werkzeug.wsgi import wrap_file
 from werkzeug.routing import BaseConverter
 from pymongo.read_preferences import ReadPreference
 import pymongo
-import warnings
 
 from flask_pymongo.wrappers import MongoClient
 from flask_pymongo.wrappers import MongoReplicaSetClient
@@ -122,13 +121,14 @@ class PyMongo(object):
             raise Exception('duplicate config_prefix "%s"' % config_prefix)
 
         self.config_prefix = config_prefix
+
         def key(suffix):
             return '%s_%s' % (config_prefix, suffix)
 
         if key('URI') in app.config:
             # bootstrap configuration from the URL
             parsed = uri_parser.parse_uri(app.config[key('URI')])
-            if 'database' not in parsed:
+            if not parsed.get('database'):
                 raise ValueError('MongoDB URI does not contain database name')
             app.config[key('DBNAME')] = parsed['database']
             app.config[key('READ_PREFERENCE')] = parsed['options'].get('read_preference')
@@ -182,7 +182,8 @@ class PyMongo(object):
             read_preference = getattr(ReadPreference, read_preference)
             if read_preference is None:
                 raise ValueError(
-                    '%s_READ_PREFERENCE: No such read preference name (%r)' % (config_prefix, read_preference))
+                    '%s_READ_PREFERENCE: No such read preference name (%r)' % (
+                        config_prefix, read_preference))
             app.config[key('READ_PREFERENCE')] = read_preference
         # Else assume read_preference is already a valid constant
         # from pymongo.read_preferences.ReadPreference or None

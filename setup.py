@@ -40,7 +40,7 @@ from setuptools import find_packages, setup
 
 setup(
     name='Flask-PyMongo',
-    version='0.3.0',
+    version='0.3.1',
     url='http://flask-pymongo.readthedocs.org/',
     download_url='https://github.com/dcrosta/flask-pymongo/tags',
     license='BSD',
@@ -51,10 +51,7 @@ setup(
     zip_safe=False,
     platforms='any',
     packages=find_packages(),
-    install_requires=[
-        'Flask >= 0.8',
-        'pymongo >= 2.4',
-    ],
+    install_requires=[line.strip() for line in open("requirements.txt")],
     classifiers=[
         'Environment :: Web Environment',
         'Intended Audience :: Developers',
@@ -64,11 +61,8 @@ setup(
         'Programming Language :: Python :: 2.6',
         'Programming Language :: Python :: 2.7',
         'Programming Language :: Python :: 3.3',
+        'Programming Language :: Python :: 3.4',
         'Topic :: Internet :: WWW/HTTP :: Dynamic Content',
         'Topic :: Software Development :: Libraries :: Python Modules'
     ],
-    setup_requires=['nose'],
-    tests_require=['nose', 'coverage'],
-    test_suite='nose.collector',
 )
-
